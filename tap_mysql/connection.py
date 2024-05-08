@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # pylint: disable=missing-docstring,arguments-differ,missing-function-docstring
 
+import ssl
+
 import backoff
 import pymysql
-import ssl
 import singer
-
 from pymysql.constants import CLIENT
 
 LOGGER = singer.get_logger('tap_mysql')
 
-CONNECT_TIMEOUT_SECONDS = 30
+CONNECT_TIMEOUT_SECONDS = 120
 
 # We need to hold onto this for self-signed SSL
 MATCH_HOSTNAME = ssl.match_hostname
@@ -25,7 +25,7 @@ DEFAULT_SESSION_SQLS = ['SET @@session.time_zone="+0:00"',
 
 @backoff.on_exception(backoff.expo,
                       (pymysql.err.OperationalError),
-                      max_tries=5,
+                      max_tries=10,
                       factor=2)
 def connect_with_backoff(connection):
     connection.connect()
