@@ -25,8 +25,8 @@ DEFAULT_SESSION_SQLS = ['SET @@session.time_zone="+0:00"',
 
 @backoff.on_exception(backoff.expo,
                       (pymysql.err.OperationalError),
-                      max_tries=10,
-                      factor=2)
+                      max_tries=20,
+                      factor=3)
 def connect_with_backoff(connection):
     connection.connect()
     run_session_sqls(connection)
