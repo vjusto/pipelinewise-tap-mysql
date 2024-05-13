@@ -136,7 +136,7 @@ def whitelist_bookmark_keys(bookmark_key_set, tap_stream_id, state):
         singer.clear_bookmark(state, tap_stream_id, bookmark_key)
 
 
-def sync_query(cursor, catalog_entry, state, select_sql, columns, stream_version, params, batch_size=1000):
+def sync_query(cursor, catalog_entry, state, select_sql, columns, stream_version, params, batch_size=100):
     replication_key = singer.get_bookmark(state,
                                           catalog_entry.tap_stream_id,
                                           'replication_key')
@@ -216,5 +216,7 @@ def sync_query(cursor, catalog_entry, state, select_sql, columns, stream_version
                         
                 if rows_saved % batch_size == 0:
                     singer.write_message(singer.StateMessage(value=copy.deepcopy(state)))
+                    
+            time.sleep(1)
 
     singer.write_message(singer.StateMessage(value=copy.deepcopy(state)))

@@ -10,7 +10,8 @@ from pymysql.constants import CLIENT
 
 LOGGER = singer.get_logger('tap_mysql')
 
-CONNECT_TIMEOUT_SECONDS = 300
+CONNECT_TIMEOUT_SECONDS = 7200
+READ_TIMEOUT_SECONDS = 7200
 
 # We need to hold onto this for self-signed SSL
 MATCH_HOSTNAME = ssl.match_hostname
@@ -90,6 +91,7 @@ class MySQLConnection(pymysql.connections.Connection):
             "port": int(config["port"]),
             "cursorclass": config.get("cursorclass") or pymysql.cursors.SSCursor,
             "connect_timeout": CONNECT_TIMEOUT_SECONDS,
+            "read_timeout": READ_TIMEOUT_SECONDS,
             "charset": "utf8",
         }
 
