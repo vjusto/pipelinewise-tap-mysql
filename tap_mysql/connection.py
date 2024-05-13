@@ -10,7 +10,7 @@ from pymysql.constants import CLIENT
 
 LOGGER = singer.get_logger('tap_mysql')
 
-CONNECT_TIMEOUT_SECONDS = 120
+CONNECT_TIMEOUT_SECONDS = 300
 
 # We need to hold onto this for self-signed SSL
 MATCH_HOSTNAME = ssl.match_hostname
@@ -19,14 +19,14 @@ MYSQL_ENGINE = 'mysql'
 
 DEFAULT_SESSION_SQLS = ['SET @@session.time_zone="+0:00"',
                         'SET @@session.wait_timeout=28800',
-                        'SET @@session.net_read_timeout=3600',
-                        'SET @@session.innodb_lock_wait_timeout=3600']
+                        'SET @@session.net_read_timeout=7200',
+                        'SET @@session.innodb_lock_wait_timeout=7200']
 
 
 @backoff.on_exception(backoff.expo,
                       (pymysql.err.OperationalError),
-                      max_tries=20,
-                      factor=3)
+                      max_tries=10,
+                      factor=5)
 def connect_with_backoff(connection):
     connection.connect()
     run_session_sqls(connection)
